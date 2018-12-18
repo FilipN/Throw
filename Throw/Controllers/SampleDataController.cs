@@ -9,36 +9,22 @@ namespace Throw.Controllers
     [Route("api/[controller]")]
     public class SampleDataController : Controller
     {
+
         private static string[] Summaries = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
         [HttpGet("[action]")]
-        public IEnumerable<WeatherForecast> WeatherForecasts()
+        public string WeatherForecasts()
         {
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                DateFormatted = DateTime.Now.AddDays(index).ToString("d"),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            });
+            return "";
         }
 
-        public class WeatherForecast
+        [HttpPost("[action]")]
+        public string Login([FromBody] dynamic input)
         {
-            public string DateFormatted { get; set; }
-            public int TemperatureC { get; set; }
-            public string Summary { get; set; }
-
-            public int TemperatureF
-            {
-                get
-                {
-                    return 32 + (int)(TemperatureC / 0.5556);
-                }
-            }
+            return "{name:Filip}";
         }
     }
 }
