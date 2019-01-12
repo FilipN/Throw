@@ -10,3 +10,7 @@
         background-color: gray;
         padding-top: 10px;
     }
+
+.modal-backdrop {
+    opacity: 0.3 !important;
+}

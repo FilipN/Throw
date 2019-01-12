@@ -1,42 +1,89 @@
 ﻿import React, { Component } from 'react';
-import { Col, Grid, Row, Button, Alert } from 'react-bootstrap';
+import { Col, Grid, Row, Button, Modal , FormControl} from 'react-bootstrap';
 import './NavMenu.css';
-
+import axios from 'axios';
 
 export class NavMenu extends Component {
     displayName = NavMenu.name
 
-    handleClick() {
-        window.location.href = 'http://localhost:51529/editor';
+    constructor(props, context) {
+        super(props, context);
+
+        this.handleShow = this.handleShow.bind(this);
+        this.handleClose = this.handleClose.bind(this);
+        this.handleModalOpen = this.handleModalOpen.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+
+
+        this.state = {
+            show: false
+        };
+    }
+
+    handleClose() {
+        this.setState({ show: false });
+        var key = this.state.value;
+        var par = {
+            "name":key
+        };
+
+        axios({
+            method: 'post',
+            url: 'api/Project/Create',
+            data: par
+        }).then(res => {
+            console.log("Success");
+            window.location.href = 'http://localhost:51529/editor/' + res.data.link;
+
+        })
+
+
+    }
+
+    handleShow() {
+        this.setState({ show: true });
+    }
+
+
+    handleModalOpen() {
+        //window.location.href = 'http://localhost:51529/editor';
+        this.setState({ show: true });
+    }
+
+
+    handleChange(e) {
+        this.setState({ value: e.target.value });
     }
 
     render() {
         return (
+            <div>
             <Grid fluid >
                 <Row>
-                    <Col lg={4} className="nav-button" onClick={this.handleClick}> New Project</Col>
+                        <Col lg={4} className="nav-button" onClick={this.handleModalOpen}> New Project</Col>
                     <Col lg={4} className="nav-button"> Load Project</Col>
                     <Col lg={4} className="nav-button"> About  </Col>
                 </Row>
                 <Row>
                 </Row>
             </Grid>
-            /*<div>
-              <h1>Hello, world!</h1>
-              <p>Welcome to your new single-page application, built with:</p>
-              <ul>
-                <li><a href='https://get.asp.net/'>ASP.NET Core</a> and <a href='https://msdn.microsoft.com/en-us/library/67ef8sbd.aspx'>C#</a> for cross-platform server-side code</li>
-                <li><a href='https://facebook.github.io/react/'>React</a> for client-side code</li>
-                <li><a href='http://getbootstrap.com/'>Bootstrap</a> for layout and styling</li>
-              </ul>
-              <p>To help you get started, we've also set up:</p>
-              <ul>
-                <li><strong>Client-side navigation</strong>. For example, click <em>Counter</em> then <em>Back</em> to return here.</li>
-                <li><strong>Development server integration</strong>. In development mode, the development server from <code>create-react-app</code> runs in the background automatically, so your client-side resources are dynamically built on demand and the page refreshes when you modify any file.</li>
-                <li><strong>Efficient production builds</strong>. In production mode, development-time features are disabled, and your <code>dotnet publish</code> configuration produces minified, efficiently bundled JavaScript files.</li>
-              </ul>
-              <p>The <code>ClientApp</code> subdirectory is a standard React application based on the <code>create-react-app</code> template. If you open a command prompt in that directory, you can run <code>npm</code> commands such as <code>npm test</code> or <code>npm install</code>.</p>
-            </div>*/
+                <Modal show={this.state.show} onHide={this.handleClose} animation={false} >
+                <Modal.Header closeButton>
+                    <Modal.Title>New Project Name</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                        <FormControl
+                            type="text"
+                            placeholder="Throw project"
+                            onChange={this.handleChange}
+                            style={{ margin: 'auto', width: '80%' }}
+                        />
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={this.handleClose}>Close</Button>
+                </Modal.Footer>
+             </Modal>
+                </div>
         );
     }
 }
