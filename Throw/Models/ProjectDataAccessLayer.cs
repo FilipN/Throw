@@ -7,18 +7,17 @@ using System.Threading.Tasks;
 
 namespace Throw.Models
 {
-    public class UserDataAccessLayer
+    public class ProjectDataAccessLayer
     {
 
         ThrowSQLContext db = new ThrowSQLContext();
         ErrorLogDataAccessLayer error = new ErrorLogDataAccessLayer();
 
-        public IEnumerable<User> GetUsers ()
+        public IEnumerable<Project> GetProjets()
         {
-
             try
             {
-                return db.User.ToList();
+                return db.Project.ToList();
             }
             catch(Exception e)
             {
@@ -28,11 +27,11 @@ namespace Throw.Models
             }
         }
 
-        public int? AddUser(User user)
+        public int? AddProject(Project project)
         {
             try
             {
-                db.User.Add(user);
+                db.Project.Add(project);
                 db.SaveChanges();
                 return 1;
             }
@@ -44,11 +43,11 @@ namespace Throw.Models
             }
         }
 
-        public int? UpdateUser(User user)
+        public int? UpdateProject(Project project)
         {
             try
             {
-                db.Entry(user).State = EntityState.Modified;
+                db.Entry(project).State = EntityState.Modified;
                 db.SaveChanges();
                 return 1;
             }
@@ -60,12 +59,12 @@ namespace Throw.Models
             }
         }
 
-        //Get the details of a particular user    
-        public bool? CheckIfUserExists(User reqUser)
+        //Get the details of a particular project    
+        public bool? CheckIfProjectExists(Project reqProject)
         {
             try
             {
-                if (db.User.Where(u => u.Email == reqUser.Email && u.Name == reqUser.Name).Any())
+                if (db.Project.Where(u => u.Name == reqProject.Name && u.Link == reqProject.Link).Any())
                     return true;
                 return false;
             }
@@ -78,13 +77,13 @@ namespace Throw.Models
         }
 
 
-        //Get the details of a particular user    
-        public User GetUserData(int id)
+        //Get the details of a particular project    
+        public Project GetProjectData(int id)
         {
             try
             {
-                User user = db.User.Find(id);
-                return user;
+                Project project = db.Project.Find(id);
+                return project;
             }
             catch(Exception e)
             {
@@ -94,13 +93,13 @@ namespace Throw.Models
             }
         }
 
-        //To Delete the record of a particular user    
-        public int? DeleteUser(int id)
+        //To Delete the record of a particular project    
+        public int? DeleteProject(int id)
         {
             try
             {
-                User user = db.User.Find(id);
-                db.User.Remove(user);
+                Project project = db.Project.Find(id);
+                db.Project.Remove(project);
                 db.SaveChanges();
                 return 1;
             }
@@ -111,7 +110,5 @@ namespace Throw.Models
                 return null;
             }
         }
-
-
     }
 }

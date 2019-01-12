@@ -13,7 +13,7 @@ namespace Throw.Models
 
         public int Idproject { get; set; }
         public string Name { get; set; }
-        public string Link { get; set; }
+        public Guid Link { get; set; }
 
         public ICollection<ProjectSnapshot> ProjectSnapshot { get; set; }
         public ICollection<UserProject> UserProject { get; set; }
