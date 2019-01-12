@@ -5,13 +5,13 @@ import { NavMenu } from './NavMenu';
 export class Layout extends Component {
   displayName = Layout.name
 
-  render() {
+    render() {
+
+
     return (
       <Grid fluid>
         <Row>
-          <Col sm={3}>
-            <NavMenu />
-          </Col>
+ 
           <Col sm={9}>
             {this.props.children}
           </Col>
