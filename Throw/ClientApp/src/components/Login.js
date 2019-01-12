@@ -9,7 +9,7 @@ const responseFacebook = (response) => {
     console.log("Uspeh");
     axios({
         method: 'post',
-        url: 'api/SampleData/Login',
+        url: 'api/User/Login',
         data: response
     }).then(res => {
         console.log("Success");

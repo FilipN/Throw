@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,7 +26,7 @@ namespace Throw.Controllers
         public string Login([FromBody] dynamic input)
         {
             JObject jInput = input as JObject;
-            
+
 
             return "{name:Filip}";
         }
