@@ -3,4 +3,8 @@
     body {
         padding-top: 50px;
     }
+    facebook-login-btn{
+        height:150px;
+        width:300px;
+    }
 }
