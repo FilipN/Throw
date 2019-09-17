@@ -6,7 +6,8 @@ import { Component } from '@angular/core';
 })
 export class CounterComponent {
   public currentCount = 0;
-
+  public editorOptions = {theme: 'vs-dark', language: 'javascript'};
+  public code = 'function x() {\nconsole.log("Hello world!");\n}';
   public incrementCounter() {
     this.currentCount++;
   }

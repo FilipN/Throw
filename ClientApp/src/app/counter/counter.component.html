@@ -3,5 +3,6 @@
 <p>This is a simple example of an Angular component.</p>
 
 <p>Current count: <strong>{{ currentCount }}</strong></p>
+<ngx-monaco-editor [options]="editorOptions" [(ngModel)]="code"></ngx-monaco-editor>
 
 <button class="btn btn-primary" (click)="incrementCounter()">Increment</button>
