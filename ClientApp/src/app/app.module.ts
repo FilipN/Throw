@@ -11,6 +11,8 @@ import { EditorComponent } from './editor/editor.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { EditPageComponent } from './edit-page/edit-page.component';
+import { AdminPageComponent } from './admin-page/admin-page.component';
+import { ProjectListItemComponent } from './project-list-item/project-list-item.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +21,10 @@ import { EditPageComponent } from './edit-page/edit-page.component';
     HomeComponent,
     EditorComponent,
     FetchDataComponent,
-    EditPageComponent
+    EditPageComponent,
+    AdminPageComponent,
+    AdminPageComponent,
+    ProjectListItemComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -27,9 +32,8 @@ import { EditPageComponent } from './edit-page/edit-page.component';
     FormsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
-      { path: 'editor', component: EditorComponent },
       { path: 'edit/:id', component: EditPageComponent },
-      { path: 'fetch-data', component: FetchDataComponent },
+      { path: 'admin', component: AdminPageComponent },
     ]),
     MonacoEditorModule.forRoot()
   ],

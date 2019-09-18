@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -17,13 +17,12 @@ export class EditPageComponent {
     private route: ActivatedRoute,
    ) {
     this.textId$ = this.route.paramMap.pipe(
-      switchMap((params: ParamMap) => {
+      map((params: ParamMap) => {
         return params.get('id');
       })
     );
 
     this.textId$.subscribe((textId: string) => {
-      // TODO: request actual code from the server here using switchMap
       this.code = `
 function x() {\nconsole.log("Hello world!");\n}
 \n\n
