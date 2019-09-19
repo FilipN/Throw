@@ -13,6 +13,9 @@ import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { EditPageComponent } from './edit-page/edit-page.component';
 import { AdminPageComponent } from './admin-page/admin-page.component';
 import { ProjectListItemComponent } from './project-list-item/project-list-item.component';
+import { StoreModule } from '@ngrx/store';
+import { projectFilesReducer } from './reducers/project-files.reducer';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 @NgModule({
   declarations: [
@@ -28,6 +31,7 @@ import { ProjectListItemComponent } from './project-list-item/project-list-item.
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
+    StoreModule.forRoot({ projectFiles: projectFilesReducer }),
     HttpClientModule,
     FormsModule,
     RouterModule.forRoot([
@@ -35,7 +39,16 @@ import { ProjectListItemComponent } from './project-list-item/project-list-item.
       { path: 'edit/:id', component: EditPageComponent },
       { path: 'admin', component: AdminPageComponent },
     ]),
-    MonacoEditorModule.forRoot()
+    MonacoEditorModule.forRoot(),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25,
+      logOnly: false,
+      features: {
+        pause: false,
+        lock: true,
+        persist: true
+      }
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]

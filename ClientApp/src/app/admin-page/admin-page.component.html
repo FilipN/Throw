@@ -3,6 +3,7 @@
   <app-project-list-item
     *ngFor="let file of files$ | async"
     [projectFile]="file"
+    (removeEvent)="onRemove($event)"
   >
   </app-project-list-item>
 </div>

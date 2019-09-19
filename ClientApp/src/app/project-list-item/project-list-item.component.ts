@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { ProjectFile } from '../models/file.model';
+import { Component, Input, EventEmitter, Output } from '@angular/core';
+import { ProjectFile } from '../models/project-file.model';
 
 @Component({
   selector: 'app-project-list-item',
@@ -8,4 +8,9 @@ import { ProjectFile } from '../models/file.model';
 })
 export class ProjectListItemComponent {
   @Input() projectFile: ProjectFile;
+  @Output() removeEvent = new EventEmitter<string>();
+
+  public onRemove(projectFileId: string) {
+    this.removeEvent.emit(projectFileId);
+  }
 }
