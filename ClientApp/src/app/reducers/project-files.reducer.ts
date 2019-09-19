@@ -22,14 +22,13 @@ export const initialState: ProjectFile[] = [
 ];
 
 const _projectFilesReducer = createReducer(initialState,
-  // FIXME: using Date.getTime to generate random and unique id of the project file.
-  // generating Ids should be handled by server
-  on(create, (state, { name }) =>
+
+  on(create, (state, { name, id }) =>
     [...state, {
-      id: 'id' + (new Date()).getTime(),
+      id: id,
       code: '',
       name: name,
-      // set to current loged in usser
+      // FIXME: set to current loged in usser
       author: 'id_autora_neki_1',
       created: new Date(),
       lastUpdated: new Date(),
