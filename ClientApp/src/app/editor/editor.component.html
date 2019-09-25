@@ -1,1 +1,6 @@
 <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="code"></ngx-monaco-editor>
+<button (click)="onCreateNew()">Run</button>
+<button (click)="onCreateNew()">Lock</button>
+<button (click)="onCreateNew()">Clear output</button>
+
+<textarea [(ngModel)]="outputConsole" class="form-control" id="exampleFormControlTextarea1" rows="8"></textarea>

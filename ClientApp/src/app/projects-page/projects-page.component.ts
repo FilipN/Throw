@@ -5,11 +5,11 @@ import { Store } from '@ngrx/store';
 import { remove } from '../actions/project-files.actions';
 
 @Component({
-  selector: 'app-admin-page',
-  styleUrls: ['./admin-page.component.css'],
-  templateUrl: './admin-page.component.html'
+  selector: 'app-projects-page',
+  styleUrls: ['./projects-page.component.css'],
+  templateUrl: './projects-page.component.html'
 })
-export class AdminPageComponent {
+export class ProjectsPageComponent {
   public readonly files$: Observable<ProjectFile[]>;
   constructor(private store: Store<ProjectFile[]>) {
     this.files$ = this.store.select('projectFiles');

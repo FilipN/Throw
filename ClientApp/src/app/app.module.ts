@@ -11,7 +11,7 @@ import { EditorComponent } from './editor/editor.component';
 import { FetchDataComponent } from './fetch-data/fetch-data.component';
 import { MonacoEditorModule } from 'ngx-monaco-editor';
 import { EditPageComponent } from './edit-page/edit-page.component';
-import { AdminPageComponent } from './admin-page/admin-page.component';
+import { ProjectsPageComponent } from './projects-page/projects-page.component';
 import { ProjectListItemComponent } from './project-list-item/project-list-item.component';
 import { StoreModule } from '@ngrx/store';
 import { projectFilesReducer } from './reducers/project-files.reducer';
@@ -25,8 +25,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     EditorComponent,
     FetchDataComponent,
     EditPageComponent,
-    AdminPageComponent,
-    AdminPageComponent,
+    ProjectsPageComponent,
     ProjectListItemComponent,
   ],
   imports: [
@@ -35,9 +34,11 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     HttpClientModule,
     FormsModule,
     RouterModule.forRoot([
-      { path: '', component: HomeComponent, pathMatch: 'full' },
+      { path: '', redirectTo: 'edit', pathMatch: 'full' },
       { path: 'edit/:id', component: EditPageComponent },
-      { path: 'admin', component: AdminPageComponent },
+      { path: 'edit', component: EditPageComponent },
+      { path: 'projects', component: ProjectsPageComponent },
+
     ]),
     MonacoEditorModule.forRoot(),
     StoreDevtoolsModule.instrument({

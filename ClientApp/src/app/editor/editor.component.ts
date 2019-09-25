@@ -5,8 +5,9 @@ import { Component, Input } from '@angular/core';
   templateUrl: './editor.component.html'
 })
 export class EditorComponent {
-  public editorOptions = {theme: 'vs-dark', language: 'javascript'};
+  public editorOptions = {theme: 'vs-dark', language: 'python'};
 
   @Input('code')
-  public code = 'function x() {\nconsole.log("Hello world!");\n}';
+  public code = '';
+  public outputConsole ='5'
 }
