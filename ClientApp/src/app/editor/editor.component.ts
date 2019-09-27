@@ -18,11 +18,15 @@ export class EditorComponent {
     }, error => console.error(error));*/
   }
 
-  public onCreateNew() {
+  public onRunProgram() {
     // FIXME: generate id on the server side with uuid or something else
     //const generatedId = `${(new Date()).getTime()}`;
-    this.httpClient.post(this.basePath + 'api/projects/run', {}).subscribe(result => {
+
+    let message = { "code": this.code, 'guid':'sdfsdf234'};
+
+    this.httpClient.post(this.basePath + 'api/projects/run', message).subscribe(result => {
       alert(result);
+      this.code = result["runResult"]
     }, error => console.error(error));
     //this.store.dispatch(create({ name: `Project_${generatedId}`, id: generatedId }));
     //this.router.navigate(['/', 'edit', generatedId]);

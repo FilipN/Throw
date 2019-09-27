@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +22,8 @@ namespace Throw.Controllers
         {
             return Ok();
         }
+
+        
 
         [HttpGet("[action]")]
         public IEnumerable<WeatherForecast> WeatherForecasts()

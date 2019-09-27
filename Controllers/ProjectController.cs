@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +22,37 @@ namespace Throw.Controllers
             return id;
         }
 
+        private string runPython(string cmd, string args)
+        {
+            string dirPath = Directory.GetCurrentDirectory();
+            string path = dirPath + "\\Python\\python.exe";
+            ProcessStartInfo start = new ProcessStartInfo();
+            start.FileName = path;
+            start.Arguments = string.Format("{0} {1}", cmd, args);
+            start.UseShellExecute = false;
+            start.RedirectStandardOutput = true;
+            start.RedirectStandardError = true;
+            using (Process process = Process.Start(start))
+            {
+                string result = "", error = "";
+                using (StreamReader reader = process.StandardError)
+                {
+                    error = reader.ReadToEnd();
+                }
+
+                if (!String.IsNullOrEmpty(error)) {
+                    string[] errsp = error.Split(',');
+                    errsp[0] = "";
+                    return string.Join("", errsp);
+                }
+
+                using (StreamReader reader = process.StandardOutput)
+                {
+                    result = reader.ReadToEnd();
+                    return result;
+                }
+            }
+        }
 
         [HttpPost("")]
         public string New(JObject project)
@@ -39,7 +72,9 @@ namespace Throw.Controllers
         {
             //cuvanje fajla i pokretanje konzole python nad fajlom
             //uzimanje rezultata i vracanje
-            return "5";
+
+            System.IO.File.WriteAllText(path, content);
+            return runPython(path, "");
         }
 
 
@@ -64,7 +99,7 @@ namespace Throw.Controllers
         }
 
         [HttpPost("run")]
-        public JObject RunProject(JObject project)
+        public JObject RunProject([FromBody]JObject project)
         {
             string username = "filip";
             //umesto ovoga ce biti uzimanje iz memorije ili baze
@@ -73,17 +108,18 @@ namespace Throw.Controllers
             bool projectBlocked = getProjectLock(projectGuid);
             string userRole = getUserRole(username,projectGuid);
 
-            string path = username + "_" + projectGuid + ".py";
+            string dirPath = Directory.GetCurrentDirectory();
+            string path = dirPath+"\\ActiveProjectSnapshots\\" +username + "_" + projectGuid + ".py";
             string runResult = addFileAndRun(path, projectCode);
+
             if (userRole == "rw") { 
-                //
+                //propagira se svima
             }else if (userRole == "r")
             {
 
             }
 
-            System.IO.File.WriteAllText("ActiveProjectSnapshots\\"+projectGuid.ToString()+".py",projectCode);
-            return new JObject();
+            return new JObject() { { "runResult", runResult } };
         }
 
         private bool getProjectLock(string projectGuid)
