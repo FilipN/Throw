@@ -27,15 +27,7 @@ namespace Throw
             services.AddDbContext<DataContext>(options =>
             options.UseMySql(Configuration["Data:ThrowDatabase:ConnectionString"]));
 
-            services.AddDbContext<AppIdentityDbContext>(options =>
-                options.UseMySql(Configuration["Data:ThrowDatabaseIdentity:ConnectionString"]));
-
-            services.AddIdentity<AppUser, IdentityRole>(opts =>
-            {
-                opts.User.RequireUniqueEmail = true;
-                opts.Password.RequireNonAlphanumeric = false;
-            }).
-                AddEntityFrameworkStores<AppIdentityDbContext>().AddDefaultTokenProviders();
+            
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
@@ -86,7 +78,7 @@ namespace Throw
             });
 
             SeedData.EnsurePopulated(app);
-            IdentitySeedData.EnsurePopulated(app);
+           
         }
     }
 }
