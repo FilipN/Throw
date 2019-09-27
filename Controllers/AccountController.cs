@@ -6,6 +6,7 @@ using Throw.Model;
 
 namespace Throw.Controllers
 {
+    [Route("api/[controller]")]
     public class AccountController: Controller
     {
 

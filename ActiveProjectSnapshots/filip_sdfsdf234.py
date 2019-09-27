@@ -1,3 +1,8 @@
-import numpy as np
 
-print(np.arange(0,10,1))
+function x() {
+console.log("Hello world!");
+}
+
+
+
+//btw this is code with id: null;
