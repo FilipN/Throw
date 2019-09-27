@@ -1,3 +1,1 @@
-import numpy as np
-
-print(np.arange(0,10,1))
+print('Hello world')

@@ -54,13 +54,14 @@ namespace Throw.Controllers
             }
         }
 
-        [HttpPost("")]
-        public string New(JObject project)
+        [HttpPost("new")]
+        public JObject New([FromBody]JObject project)
         {
             //projekat sadrzi ime, mejlove kolaboratora i njihova prava
             //metod vraca link ka projektu
-            var rng = new Random();
-            return "";
+            var rng = Guid.NewGuid().ToString();
+            JObject result = new JObject() { { "guid", rng } };
+            return result;
         }
 
         public string getUserRole(string user, string projectGuid)
@@ -79,7 +80,7 @@ namespace Throw.Controllers
 
 
         [HttpPost("lock")]
-        public JObject Lock(JObject project)
+        public JObject Lock([FromBody]JObject project)
         {
             string username = "filip";
             //umesto ovoga ce biti uzimanje iz memorije ili baze
@@ -120,6 +121,30 @@ namespace Throw.Controllers
             }
 
             return new JObject() { { "runResult", runResult } };
+        }
+
+        [HttpPost("open")]
+        public JObject OpenProject([FromBody]JObject project)
+        {
+            string username = "filip";
+
+            string projectGuid = project["guid"].ToString();
+            bool projectBlocked = getProjectLock(projectGuid);
+            string userRole = getUserRole(username, projectGuid);
+
+            if (userRole == "rw")
+            {
+                //propagira se svima
+            }
+            else if (userRole == "r")
+            {
+
+            }
+
+            string code = "print('Hello world')";
+
+
+            return new JObject() { { "code",code }, {"role",userRole } };
         }
 
         private bool getProjectLock(string projectGuid)
