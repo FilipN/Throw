@@ -14,6 +14,13 @@ namespace Throw.Controllers
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
+
+        [Route("Home/Contact")]
+        public IActionResult Contact()
+        {
+            return Ok();
+        }
+
         [HttpGet("[action]")]
         public IEnumerable<WeatherForecast> WeatherForecasts()
         {
