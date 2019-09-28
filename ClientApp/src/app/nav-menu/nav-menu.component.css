@@ -20,3 +20,9 @@ html {
 .navigation-bar-gr{
   background-color:lightgreen
 }
+
+.navigation-logo {
+  background: url(../../assets/images/logoSmall.png);
+  width:35px;
+  height:35px;
+}

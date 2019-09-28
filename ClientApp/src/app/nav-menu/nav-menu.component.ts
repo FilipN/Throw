@@ -24,6 +24,14 @@ export class NavMenuComponent {
     this.store = storeI;
   }
 
+  public onLogout() {
+    this.router.navigate(['/', 'login']);
+  }
+
+  public onProjects() {
+    this.router.navigate(['/', 'projects']);
+  }
+
   public onNewProject() {
     let message = { "username": "filip"};
 

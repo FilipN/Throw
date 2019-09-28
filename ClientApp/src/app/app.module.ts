@@ -50,13 +50,6 @@ export function socialConfigs() {
     StoreModule.forRoot({ projectFiles: projectFilesReducer }),
     HttpClientModule,
     FormsModule,
-    /*RouterModule.forRoot([
-      { path: '', redirectTo: 'edit', pathMatch: 'full' },
-      { path: 'edit/:id', component: EditPageComponent },
-      { path: 'edit', component: EditPageComponent },
-      { path: 'projects', component: ProjectsPageComponent },
-
-    ]),*/
     MonacoEditorModule.forRoot(),
     StoreDevtoolsModule.instrument({
       maxAge: 25,

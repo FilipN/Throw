@@ -23,11 +23,7 @@ export class EditPageComponent {
     );
 
     this.textId$.subscribe((textId: string) => {
-      this.code = `
-function x() {\nconsole.log("Hello world!");\n}
-\n\n
-//btw this is code with id: ${textId};
-`;
+      this.code = ``;
     });
   }
 }

@@ -32,6 +32,8 @@ export class EditorComponent {
     this.outputConsole = "";
   }
 
+
+
   public onLock() {
     let message = { "lock": this.lock, 'guid': 'sdfsdf234' };
 

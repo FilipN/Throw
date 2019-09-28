@@ -32,6 +32,7 @@
 
   <ItemGroup>
     <Folder Include="ActiveProjectSnapshots\" />
+    <Folder Include="ClientApp\src\assets\images\" />
     <Folder Include="Python\" />
   </ItemGroup>
 
