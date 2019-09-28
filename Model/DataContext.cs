@@ -19,6 +19,8 @@ namespace Throw.Model
 
         public DbSet<ProjectSnapshot> ProjectSnapshots { get; set; }
 
+        public DbSet<ProjectUser> ProjectUsers { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ProjectUser>()
@@ -64,6 +66,20 @@ namespace Throw.Model
             }
 
             return "";
+
+        }
+
+        public string GetProjectsForUser(string email)
+        {
+            User user = Users.FirstOrDefault(u => u.Email == email);
+
+            var projsUsers = ProjectUsers.Where(u => u.UserId == user.UserId).ToList();
+            List < Project > p= new List<Project>();
+            foreach (var el in projsUsers)
+            {
+                p.Append(el.Project);
+            }
+            return JsonConvert.SerializeObject(p);
 
         }
     }

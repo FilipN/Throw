@@ -167,6 +167,8 @@ namespace Throw.Controllers
             return true;
         }
 
+
+        //pozivace se stalno na key press
         [HttpPost("change")]
         public JObject Change([FromBody]JObject project)
         {
@@ -174,18 +176,73 @@ namespace Throw.Controllers
             string username = "filip";
             string projectGuid = project["guid"].ToString();
             int lineNumber = Int32.Parse(project["linenumber"].ToString());
+            string ucode = project["code"].ToString();
             string userRole = getUserRole(username, projectGuid);
+
+
 
             //Code projectCode = HttpContext.Session.GetComplexData<Code>(projectGuid);
             Code currCode;
             if(cache.TryGetValue<Code>(projectGuid, out currCode))
             {
-                
+                string[] userCode = ucode.Split('\n');
+
+                int minLines = 0;
+                if (userCode.Length > currCode.Lines.Count)
+                    minLines = userCode.Length;
+                else
+                    minLines = currCode.Lines.Count;
+
+                for (int i = 0; i < minLines; i++)
+                {
+                    //ako su razlicite
+                    if (userCode[i] != currCode.Lines[i].Content)
+                    {
+                        //proveriti pre promene da nije neki drugi user menjao ovu liniju pre n sekundi
+                        currCode.Lines[i].Content = userCode[i];
+                        currCode.Lines[i].LastModified = DateTime.Now;
+                        //azurirati usera
+                    }
+                }
+
+                //znaci da imamo dodatnih linija
+                if(userCode.Length > currCode.Lines.Count)
+                {
+                    //dodajemo svaku dodatnu liniju
+                    for(int i =minLines; i< userCode.Length; i++)
+                    {
+                        currCode.addLine(userCode[i]);
+                    }
+                }
+
+                //znaci da imamo obrisanih linija
+                if (userCode.Length < currCode.Lines.Count)
+                {
+                    //dodajemo svaku dodatnu liniju
+                    for (int i = minLines; i < currCode.Lines.Count; i++)
+                    {
+                        currCode.deleteLine(i);
+                    }
+                }
+
+
+                //cache.Set<Code>(projectGuid, currCode);
             }
 
             cache.Set<Code>(projectGuid, currCode);
 
             return new JObject();
+        }
+
+
+
+        [HttpPost("projectsforuser")]
+        public JObject ProjectsForUser([FromBody]JObject userIn)
+        {
+            string email = userIn["email"].ToString();
+            string json = repo.GetProjectsForUser(email);
+            JObject result = new JObject() { { "guid", "" } };
+            return result;
         }
     }
 }

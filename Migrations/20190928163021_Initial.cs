@@ -68,7 +68,7 @@ namespace Throw.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ProjectUser",
+                name: "ProjectUsers",
                 columns: table => new
                 {
                     ProjectId = table.Column<int>(nullable: false),
@@ -76,15 +76,15 @@ namespace Throw.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProjectUser", x => new { x.ProjectId, x.UserId });
+                    table.PrimaryKey("PK_ProjectUsers", x => new { x.ProjectId, x.UserId });
                     table.ForeignKey(
-                        name: "FK_ProjectUser_Projects_ProjectId",
+                        name: "FK_ProjectUsers_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
                         principalColumn: "ProjectId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ProjectUser_Users_UserId",
+                        name: "FK_ProjectUsers_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "UserId",
@@ -102,8 +102,8 @@ namespace Throw.Migrations
                 column: "ProjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ProjectUser_UserId",
-                table: "ProjectUser",
+                name: "IX_ProjectUsers_UserId",
+                table: "ProjectUsers",
                 column: "UserId");
         }
 
@@ -113,7 +113,7 @@ namespace Throw.Migrations
                 name: "ProjectSnapshots");
 
             migrationBuilder.DropTable(
-                name: "ProjectUser");
+                name: "ProjectUsers");
 
             migrationBuilder.DropTable(
                 name: "Projects");

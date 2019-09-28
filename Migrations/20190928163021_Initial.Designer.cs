@@ -9,14 +9,14 @@ using Throw.Model;
 namespace Throw.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20190928115125_Initial")]
+    [Migration("20190928163021_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.2-servicing-10034")
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Throw.Model.Project", b =>
@@ -69,7 +69,7 @@ namespace Throw.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ProjectUser");
+                    b.ToTable("ProjectUsers");
                 });
 
             modelBuilder.Entity("Throw.Model.User", b =>

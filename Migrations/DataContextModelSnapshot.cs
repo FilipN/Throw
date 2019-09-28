@@ -14,7 +14,7 @@ namespace Throw.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.2-servicing-10034")
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Throw.Model.Project", b =>
@@ -67,7 +67,7 @@ namespace Throw.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ProjectUser");
+                    b.ToTable("ProjectUsers");
                 });
 
             modelBuilder.Entity("Throw.Model.User", b =>

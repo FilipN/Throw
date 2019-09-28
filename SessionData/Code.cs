@@ -42,6 +42,17 @@ namespace Throw.SessionData
             return code;
         }
 
+        public void addLine(string content)
+        {
+            int lastlinenum = Lines[Lines.Count - 1].NumberOfLine;
+            Lines.Add(new Line { Content = content, LastModified = DateTime.Now, NumberOfLine = lastlinenum + 1 });
+        }
+
+        public void deleteLine(int linenum)
+        {
+            Lines.RemoveAt(linenum);
+        }
+
         public List<string> Users { get; set; }
     }
 
