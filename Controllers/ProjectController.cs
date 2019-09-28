@@ -5,13 +5,21 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json.Linq;
+using Throw.Hubs;
+using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
 
 namespace Throw.Controllers
 {
     [Route("api/[controller]")]
     public class ProjectsController : Controller
     {
+        IHubContext<ProjectHub> hub;
+        public ProjectsController(IHubContext<ProjectHub> hubcontext)
+        {
+            hub = hubcontext;
+        }
 
         [HttpGet("{id}")]
         public string ProjectById(string id)
@@ -95,7 +103,7 @@ namespace Throw.Controllers
             {
                 //nema prava
             }
-
+            
             return new JObject();
         }
 
@@ -106,21 +114,21 @@ namespace Throw.Controllers
             //umesto ovoga ce biti uzimanje iz memorije ili baze
             string projectCode = project["code"].ToString();
             string projectGuid = project["guid"].ToString();
-            bool projectBlocked = getProjectLock(projectGuid);
+            bool projectLocked = getProjectLock(projectGuid);
             string userRole = getUserRole(username,projectGuid);
 
             string dirPath = Directory.GetCurrentDirectory();
             string path = dirPath+"\\ActiveProjectSnapshots\\" +username + "_" + projectGuid + ".py";
             string runResult = addFileAndRun(path, projectCode);
 
-            if (userRole == "rw") { 
-                //propagira se svima
-            }else if (userRole == "r")
-            {
+            JObject runResultO = new JObject() { { "runResult", runResult } };
+            //hub.Clients.All.SendAsync("codechange",new JObject());
 
+            if (userRole == "rw") {
+                hub.Clients.Groups(projectGuid).SendAsync("outputchange", runResultO);
             }
 
-            return new JObject() { { "runResult", runResult } };
+            return runResultO;
         }
 
         [HttpPost("open")]
@@ -131,6 +139,7 @@ namespace Throw.Controllers
             string projectGuid = project["guid"].ToString();
             bool projectBlocked = getProjectLock(projectGuid);
             string userRole = getUserRole(username, projectGuid);
+
 
             if (userRole == "rw")
             {

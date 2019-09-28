@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Throw.Hubs;
 using Throw.Model;
 
 namespace Throw
@@ -23,12 +24,20 @@ namespace Throw
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.WithOrigins("http://localhost:44369")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials());
+            });
 
             services.AddDbContext<DataContext>(options =>
             options.UseMySql(Configuration["Data:ThrowDatabase:ConnectionString"]));
 
-            
 
+            services.AddSignalR();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             // In production, the Angular files will be served from this directory
@@ -56,14 +65,17 @@ namespace Throw
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseSpaStaticFiles();
-
+            app.UseCors("CorsPolicy");
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
                     name: "default",
                     template: "{controller}/{action}/{id?}");
             });
-
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<ProjectHub>("/code");
+            });
             app.UseSpa(spa =>
             {
                 // To learn more about options for serving an Angular SPA from ASP.NET Core,
@@ -77,7 +89,7 @@ namespace Throw
                 }
             });
 
-            SeedData.EnsurePopulated(app);
+            //SeedData.EnsurePopulated(app);
            
         }
     }

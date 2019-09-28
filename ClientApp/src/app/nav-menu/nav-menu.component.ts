@@ -32,9 +32,7 @@ export class NavMenuComponent {
         let guid = result["guid"];
         this.store.dispatch(create({ name: `Project_${guid}`, id: guid }));
 
-        this.router.navigate(['/', 'edit', guid], {
-          queryParams: { refresh: new Date().getTime() }
-        });
+        this.router.navigate(['/', 'edit', guid]);
       }
     }, error => console.error(error));
 
