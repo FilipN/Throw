@@ -8,8 +8,10 @@ import { HttpClient } from '@angular/common/http';
 export class SocialloginService {
   url;
   constructor(private http: HttpClient) { }
-  Savesresponse(responce) {
-    this.url = 'http://localhost:64726/Api/Login/Savesresponse';
-    return this.http.post(this.url, responce);
+
+  Savesresponse(response) {
+    this.url = 'https://localhost:44369/Api/user/login';
+    return this.http.post(this.url, response);
   }
+
 }

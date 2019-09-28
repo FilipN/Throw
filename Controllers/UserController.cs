@@ -24,9 +24,9 @@ namespace Throw.Controllers
         {
 
             string email = userIN["email"].ToString();
-            string image = userIN["picture"].ToString();
+            string image = userIN["image"].ToString();
             string name = userIN["name"].ToString();
-
+            string token = userIN["token"].ToString();
             User user = new User { Email = email, DisplayName = name, Image = image };
             bool saved = repo.SaveUser(user);
 

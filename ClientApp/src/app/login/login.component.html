@@ -1,0 +1,35 @@
+<div class="container" style="padding-top:60px;">
+  <div class="row">
+    <div class="col-md-6 mx-auto">
+      <div class="card-group">
+        <div class="card p-4">
+          <div class="card-body">
+            <form name="form">
+
+              <!-- <button class="btn btn-primary" style="text-align:center">Login</button>   -->
+
+            </form>
+
+            <hr style="border-top: 1px solid #eee;">
+
+            <div class="row">
+
+              <div class="col-6">
+
+                <button (click)="socialSignIn('facebook')" class="loginBtn loginBtn--facebook">
+
+                  Login with Facebook
+                </button>
+              </div>
+              <div class="col-6 text-right">
+                <button (click)="socialSignIn('google')" class="loginBtn loginBtn--google">
+                  Login with Google
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
