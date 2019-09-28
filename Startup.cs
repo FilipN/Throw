@@ -27,7 +27,7 @@ namespace Throw
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => builder.WithOrigins("http://localhost:44369")
+                    builder => builder.WithOrigins("http://localhost:44369","*")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials());
