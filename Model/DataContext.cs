@@ -55,9 +55,10 @@ namespace Throw.Model
 
         }
 
-        public Guid NewProject()
+        public Guid NewProject(string username)
         {
-            Project project = new Project { ProjectGUID = Guid.NewGuid() };
+            User userDB = Users.FirstOrDefault(p => p.Email == username);
+            Project project = new Project { ProjectGUID = Guid.NewGuid() , Owner=userDB};
             Projects.Add(project);
             SaveChanges();
 

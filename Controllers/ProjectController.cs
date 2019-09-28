@@ -63,7 +63,7 @@ namespace Throw.Controllers
             string username = project["identity"].ToString();
             //projekat sadrzi ime, mejlove kolaboratora i njihova prava
             //metod vraca link ka projektu
-            var rng = repo.NewProject();
+            var rng = repo.NewProject(username);
             JObject result = new JObject() { { "guid", rng } };
             return result;
         }
@@ -131,6 +131,7 @@ namespace Throw.Controllers
         [HttpPost("open")]
         public JObject OpenProject([FromBody]JObject project)
         {
+            string username = project["identity"].ToString();
             string projectGuid = project["guid"].ToString();
 
             string code = "";
