@@ -72,11 +72,54 @@ namespace Throw.Model
             Project project = Projects.FirstOrDefault(p => p.ProjectGUID.ToString() == guid);
             if(project!=null)
             {
-                var jproject = JsonConvert.SerializeObject(project);
+                var jproject = JsonConvert.SerializeObject(project, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
                 return jproject;
             }
 
             return "";
+
+        }
+
+
+        public string GetProjectOwnerByGUID(string guid)
+        {
+            Project project = Projects.Include(p=>p.Owner).FirstOrDefault(p => p.ProjectGUID.ToString() == guid);
+            if (project != null)
+            {
+                return project.Owner.Email;
+            }
+
+            return "";
+
+        }
+
+        public void AddMemberToProject(string username, string guid)
+        {
+            User userDB = Users.FirstOrDefault(p => p.Email == username);
+            Project project = Projects.FirstOrDefault(p => p.ProjectGUID.ToString() == guid);
+
+            var data = Projects.Include(p => p.ProjectUser)
+                .Any(p => p.ProjectGUID.ToString() == guid && p.ProjectUser.Count > 0 && p.ProjectUser.Any(pu => pu.UserId == userDB.UserId));
+            
+            //dodavanje usera
+            if(data==false)
+            {
+                ProjectUser pu = new ProjectUser
+                {
+                    User = userDB,
+                    UserId = userDB.UserId,
+                    Project = project,
+                    ProjectId = project.ProjectId
+                };
+
+                Projects.Include(p => p.ProjectUser)
+                    .FirstOrDefault(p => p.ProjectGUID.ToString() == guid).ProjectUser.Add(pu);
+                SaveChanges();
+            }  
+            
 
         }
 

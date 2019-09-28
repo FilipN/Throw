@@ -12,9 +12,11 @@ namespace Throw.SessionData
         public Code(string codeContent)
         {
             string[] lines = codeContent.Split("\n");
+            int i = 0;
             foreach (string item in lines)
             {
-                Line line = new Line() { Content = item };
+                Line line = new Line() { Content = item , NumberOfLine=i};
+                i++;
                 Lines.Add(line);
             }
         }
@@ -53,7 +55,7 @@ namespace Throw.SessionData
             Lines.RemoveAt(linenum);
         }
 
-        public List<string> Users { get; set; }
+        public List<string> Users { get; set; } = new List<string>();
     }
 
     public class Line

@@ -133,18 +133,34 @@ namespace Throw.Controllers
         {
             string username = project["identity"].ToString();
             string projectGuid = project["guid"].ToString();
+            repo.AddMemberToProject(username, projectGuid);
+            string jproject = repo.GetProjectByGUID(projectGuid);
+
 
             string code = "";
             Code currCode;
-            if (!cache.TryGetValue<Code>(projectGuid, out currCode)) { 
-                string jproject = repo.GetProjectByGUID(projectGuid);
+            if (!cache.TryGetValue<Code>(projectGuid, out currCode)) {               
                 JObject projectO = JObject.Parse(jproject);
                 currCode = new Code(projectO["Content"].ToString());
             }
+            currCode.addUser(username);
             code = currCode.getCode();
             cache.Set<Code>(projectGuid, currCode);
 
-            /*bool projectBlocked = getProjectLock(projectGuid);
+            JObject result = new JObject();
+            if(repo.GetProjectOwnerByGUID(projectGuid)==username)
+                result.Add("role", "owner");
+            else
+                result.Add("role", "member");
+
+            result.Add("project", jproject);
+            result.Add("code", code);
+            result.Add("users", new JArray( currCode.Users));
+
+            return new JObject() { { "code", code } };
+        }
+
+        /*bool projectBlocked = getProjectLock(projectGuid);
             string userRole = getUserRole(username, projectGuid);
 
             if (userRole == "rw")
@@ -159,10 +175,7 @@ namespace Throw.Controllers
             string code = "print('Hello world')"; */
 
 
-            // return new JObject() { { "code",code }, {"role",userRole } };
-
-            return new JObject() { { "code", code } };
-        }
+        // return new JObject() { { "code",code }, {"role",userRole } };
 
         private bool getProjectLock(string projectGuid)
         {
