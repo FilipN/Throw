@@ -26,7 +26,6 @@ export class NavMenuComponent {
 
   public getUserName() {
     let username = JSON.parse(localStorage.getItem('socialusers'))["email"];
-    alert(username);
     return username;
   }
 

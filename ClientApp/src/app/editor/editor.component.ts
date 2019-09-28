@@ -1,4 +1,4 @@
-import { Component, Input, Inject } from '@angular/core';
+import { Component, Input, Inject,SimpleChanges } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import * as signalR from '@aspnet/signalr';
@@ -21,9 +21,22 @@ export class EditorComponent {
     this.router = routerI;
   }
 
+
+  ngOnChanges(changes: SimpleChanges) {
+    for (let propName in changes) {
+      let chng = changes[propName];
+      let cur = JSON.stringify(chng.currentValue);
+      let prev = JSON.stringify(chng.previousValue);
+      //this.changeLog.push(`${propName}: currentValue = ${cur}, previousValue = ${prev}`);
+    }
+  }
+
+  public onChange() {
+    alert("key");
+  }
+
   public getUserName() {
     let username = JSON.parse(localStorage.getItem('socialusers'))["email"];
-    alert(username);
     return username;
   }
 
@@ -57,9 +70,11 @@ export class EditorComponent {
   public editorOptions = {theme: 'vs-dark', language: 'python'};
 
   ngOnInit() {
+    let un = this.getUserName();
+
     let pathParts = this.router.url.split("/");
     let guid = pathParts[pathParts.length - 1];
-    let message = { "username": "filip", "guid": guid };
+    let message = { "identity": un, "guid": guid };
     this.httpClient.post(this.basePath + 'api/projects/open', message).subscribe(result => {
 
       this.code = result["code"]
