@@ -46,6 +46,8 @@ export class LoginComponent implements OnInit {
 
       console.log(socialusers);
 
+      localStorage.setItem('socialusers', JSON.stringify(socialusers));
+
       this.Savesresponse(socialusers);
 
     });
@@ -64,9 +66,6 @@ export class LoginComponent implements OnInit {
 
       this.response = res.userDetail;
 
-      localStorage.setItem('socialusers', JSON.stringify(this.socialusers));
-
-      console.log(localStorage.setItem('socialusers', JSON.stringify(this.socialusers)));
 
       this.router.navigate([`/Dashboard`]);
 

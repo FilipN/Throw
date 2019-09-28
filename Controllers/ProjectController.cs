@@ -60,6 +60,7 @@ namespace Throw.Controllers
         [HttpPost("new")]
         public JObject New([FromBody]JObject project)
         {
+            string username = project["identity"].ToString();
             //projekat sadrzi ime, mejlove kolaboratora i njihova prava
             //metod vraca link ka projektu
             var rng = repo.NewProject();
@@ -105,7 +106,7 @@ namespace Throw.Controllers
         [HttpPost("run")]
         public JObject RunProject([FromBody]JObject project)
         {
-            string username = "filip";
+            string username = project["identity"].ToString();
             //umesto ovoga ce biti uzimanje iz memorije ili baze
             string projectCode = project["code"].ToString();
             string projectGuid = project["guid"].ToString();
@@ -172,8 +173,7 @@ namespace Throw.Controllers
         [HttpPost("change")]
         public JObject Change([FromBody]JObject project)
         {
-
-            string username = "filip";
+            string username = project["identity"].ToString();
             string projectGuid = project["guid"].ToString();
             int lineNumber = Int32.Parse(project["linenumber"].ToString());
             string ucode = project["code"].ToString();

@@ -12,7 +12,8 @@ export class EditorComponent {
   basePath;
   router;
   projectGuid = '';
-  usrs = ["Filip","Ana"];
+  usrs = ["Filip", "Ana"];
+
 
   constructor(routerI : Router,http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
     this.httpClient = http;
@@ -20,8 +21,15 @@ export class EditorComponent {
     this.router = routerI;
   }
 
+  public getUserName() {
+    let username = JSON.parse(localStorage.getItem('socialusers'))["email"];
+    alert(username);
+    return username;
+  }
+
   public onRunProgram() {
-    let message = { "code": this.code, 'guid': this.projectGuid};
+    let un = this.getUserName();
+    let message = { "code": this.code, 'guid': this.projectGuid,'identity':un};
 
     this.httpClient.post(this.basePath + 'api/projects/run', message).subscribe(result => {
       this.outputConsole = result["runResult"]
@@ -29,12 +37,15 @@ export class EditorComponent {
   }
 
   public onClearConsole() {
+    let un = this.getUserName();
+
     this.outputConsole = "";
   }
 
 
 
   public onLock() {
+    let un = this.getUserName();
     let message = { "lock": this.lock, 'guid': 'sdfsdf234' };
 
     this.httpClient.post(this.basePath + 'api/projects/run', message).subscribe(result => {
