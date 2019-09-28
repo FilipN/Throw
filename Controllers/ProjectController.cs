@@ -5,29 +5,19 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json.Linq;
-using Throw.Hubs;
-using static Microsoft.AspNetCore.Hosting.Internal.HostingApplication;
+using Throw.Model;
 
 namespace Throw.Controllers
 {
     [Route("api/[controller]")]
     public class ProjectsController : Controller
     {
-        IHubContext<ProjectHub> hub;
-        public ProjectsController(IHubContext<ProjectHub> hubcontext)
-        {
-            hub = hubcontext;
-        }
+        private DataContext repo;
 
-        [HttpGet("{id}")]
-        public string ProjectById(string id)
+        public ProjectsController(DataContext repository)
         {
-            //proverava prava, u zavisnosti od toga javlja i klijentu koja su prava zbog drugacijeg crtanja
-            //vraca aktivni snapshot projekta i 
-            var rng = new Random();
-            return id;
+            repo = repository;
         }
 
         private string runPython(string cmd, string args)
@@ -67,7 +57,7 @@ namespace Throw.Controllers
         {
             //projekat sadrzi ime, mejlove kolaboratora i njihova prava
             //metod vraca link ka projektu
-            var rng = Guid.NewGuid().ToString();
+            var rng = repo.NewProject();
             JObject result = new JObject() { { "guid", rng } };
             return result;
         }
@@ -103,7 +93,7 @@ namespace Throw.Controllers
             {
                 //nema prava
             }
-            
+
             return new JObject();
         }
 
@@ -114,32 +104,34 @@ namespace Throw.Controllers
             //umesto ovoga ce biti uzimanje iz memorije ili baze
             string projectCode = project["code"].ToString();
             string projectGuid = project["guid"].ToString();
-            bool projectLocked = getProjectLock(projectGuid);
+            bool projectBlocked = getProjectLock(projectGuid);
             string userRole = getUserRole(username,projectGuid);
 
             string dirPath = Directory.GetCurrentDirectory();
             string path = dirPath+"\\ActiveProjectSnapshots\\" +username + "_" + projectGuid + ".py";
             string runResult = addFileAndRun(path, projectCode);
 
-            JObject runResultO = new JObject() { { "runResult", runResult } };
-            //hub.Clients.All.SendAsync("codechange",new JObject());
+            if (userRole == "rw") { 
+                //propagira se svima
+            }
+            else if (userRole == "r")
+            {
 
-            if (userRole == "rw") {
-                hub.Clients.Groups(projectGuid).SendAsync("outputchange", runResultO);
             }
 
-            return runResultO;
+            return new JObject() { { "runResult", runResult } };
         }
 
         [HttpPost("open")]
         public JObject OpenProject([FromBody]JObject project)
         {
-            string username = "filip";
+            
 
             string projectGuid = project["guid"].ToString();
-            bool projectBlocked = getProjectLock(projectGuid);
-            string userRole = getUserRole(username, projectGuid);
+            string jproject=repo.GetProjectByGUID(projectGuid);
 
+            /*bool projectBlocked = getProjectLock(projectGuid);
+            string userRole = getUserRole(username, projectGuid);
 
             if (userRole == "rw")
             {
@@ -150,10 +142,12 @@ namespace Throw.Controllers
 
             }
 
-            string code = "print('Hello world')";
+            string code = "print('Hello world')"; */
 
 
-            return new JObject() { { "code",code }, {"role",userRole } };
+            // return new JObject() { { "code",code }, {"role",userRole } };
+
+            return JObject.Parse(jproject);
         }
 
         private bool getProjectLock(string projectGuid)

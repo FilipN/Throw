@@ -13,7 +13,9 @@ namespace Throw.Model
 
         public string Image { get; set; }
 
-        public IEnumerable<Project> Projects { get; set; }
+        public ICollection<ProjectUser> ProjectUsers { get; set; }
 
     }
+
+
 }

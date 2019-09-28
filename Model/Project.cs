@@ -16,10 +16,20 @@ namespace Throw.Model
         public string Title { get; set; }
         public string Content { get; set; }
 
-        public int Owner { get; set; }
+        public User Owner { get; set; }
 
-        public IEnumerable<User> Members { get; set; }
+        public ICollection<ProjectUser> ProjectUsers { get; set; }
 
+    }
+
+    public class ProjectUser
+    {
+        public int ProjectId { get; set; }
+
+        public Project Project { get; set; }
+        public int UserId { get; set; }
+
+        public User User { get; set; }
     }
 
     public class ProjectSnapshot

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,13 @@ namespace Throw.Model
 
         public DbSet<ProjectSnapshot> ProjectSnapshots { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ProjectUser>()
+                .HasKey(bc => new { bc.ProjectId, bc.UserId });
+
+           
+        }
 
         public bool SaveUser(User user)
         {
@@ -35,12 +43,27 @@ namespace Throw.Model
 
         }
 
-        public bool NewProject(Project project)
+        public Guid NewProject()
         {
-
+            Project project = new Project { ProjectGUID = Guid.NewGuid() };
             Projects.Add(project);
             SaveChanges();
-            return true;
+
+            return project.ProjectGUID;
+
+        }
+        //Newtonsoft.Json.JsonConvert.SerializeObject(new {foo = "bar"})
+
+        public string GetProjectByGUID(string guid)
+        {
+            Project project = Projects.FirstOrDefault(p => p.ProjectGUID.ToString() == guid);
+            if(project!=null)
+            {
+                var jproject = JsonConvert.SerializeObject(project);
+                return jproject;
+            }
+
+            return "";
 
         }
     }
