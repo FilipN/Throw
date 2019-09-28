@@ -24,7 +24,7 @@ export function socialConfigs() {
 
   const config = new AuthServiceConfig([{
     id: FacebookLoginProvider.PROVIDER_ID,
-    provider: new FacebookLoginProvider('app -id')
+    provider: new FacebookLoginProvider('2720779721314101')
   },
   {
     id: GoogleLoginProvider.PROVIDER_ID,
