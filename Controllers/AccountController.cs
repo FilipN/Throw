@@ -10,7 +10,12 @@ namespace Throw.Controllers
     public class AccountController: Controller
     {
 
-        
+        private DataContext repo;
+
+        public AccountController(DataContext repository)
+        {
+            repo = repository;
+        }
 
 
 

@@ -83,6 +83,19 @@ namespace Throw.Model
 
         }
 
+        public string GetSnapshotsByGUID(string guid)
+        {
+
+            var prsnap = ProjectSnapshots.Include(ps => ps.Project).Where(ps => ps.Project.ProjectGUID.ToString() == guid).ToList();
+            string json = JsonConvert.SerializeObject(prsnap, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
+
+            return json;
+
+        }
+
 
         public string GetProjectOwnerByGUID(string guid)
         {
