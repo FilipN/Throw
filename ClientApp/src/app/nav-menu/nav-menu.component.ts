@@ -24,7 +24,14 @@ export class NavMenuComponent {
     this.store = storeI;
   }
 
+  public getUserName() {
+    let username = JSON.parse(localStorage.getItem('socialusers'))["email"];
+    alert(username);
+    return username;
+  }
+
   public onLogout() {
+    localStorage.removeItem("socialusers");
     this.router.navigate(['/', 'login']);
   }
 
@@ -33,7 +40,8 @@ export class NavMenuComponent {
   }
 
   public onNewProject() {
-    let message = { "username": "filip"};
+    let id = this.getUserName();
+    let message = { "identity": id};
 
     this.httpClient.post(this.basePath + 'api/projects/new', message).subscribe(result => {
       if (result != undefined && result["guid"] != undefined) {
