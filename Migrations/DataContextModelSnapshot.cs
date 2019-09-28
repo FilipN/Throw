@@ -67,7 +67,7 @@ namespace Throw.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ProjectUsers");
+                    b.ToTable("ProjectUser");
                 });
 
             modelBuilder.Entity("Throw.Model.User", b =>
@@ -103,12 +103,12 @@ namespace Throw.Migrations
             modelBuilder.Entity("Throw.Model.ProjectUser", b =>
                 {
                     b.HasOne("Throw.Model.Project", "Project")
-                        .WithMany("ProjectUsers")
+                        .WithMany("ProjectUser")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Throw.Model.User", "User")
-                        .WithMany("ProjectUsers")
+                        .WithMany("ProjectUser")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });

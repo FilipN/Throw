@@ -13,7 +13,7 @@ namespace Throw.Model
 
         public string Image { get; set; }
 
-        public ICollection<ProjectUser> ProjectUsers { get; set; }
+        public ICollection<ProjectUser> ProjectUser { get; set; }
 
     }
 

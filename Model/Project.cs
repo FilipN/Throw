@@ -18,7 +18,7 @@ namespace Throw.Model
 
         public User Owner { get; set; }
 
-        public ICollection<ProjectUser> ProjectUsers { get; set; }
+        public ICollection<ProjectUser> ProjectUser { get; set; } 
 
     }
 

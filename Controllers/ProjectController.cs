@@ -241,7 +241,7 @@ namespace Throw.Controllers
         {
             string email = userIn["email"].ToString();
             string json = repo.GetProjectsForUser(email);
-            JObject result = new JObject() { { "guid", "" } };
+            JObject result = new JObject() { { "result", json } };
             return result;
         }
     }

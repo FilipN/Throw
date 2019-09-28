@@ -19,15 +19,25 @@ namespace Throw.Model
 
         public DbSet<ProjectSnapshot> ProjectSnapshots { get; set; }
 
-        public DbSet<ProjectUser> ProjectUsers { get; set; }
+        //public DbSet<ProjectUser> ProjectUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ProjectUser>()
                 .HasKey(bc => new { bc.ProjectId, bc.UserId });
 
-           
-        }
+            modelBuilder.Entity<ProjectUser>()
+                .HasOne(x => x.Project)
+                .WithMany(x => x.ProjectUser)
+                .HasForeignKey(x => x.ProjectId);
+
+            modelBuilder.Entity<ProjectUser>()
+                .HasOne(x => x.User)
+                .WithMany(x => x.ProjectUser)
+                .HasForeignKey(x => x.UserId);
+
+
+        } 
 
         public bool SaveUser(User user)
         {
@@ -72,15 +82,17 @@ namespace Throw.Model
         public string GetProjectsForUser(string email)
         {
             User user = Users.FirstOrDefault(u => u.Email == email);
+            var data = Users
+            .Include(u => u.ProjectUser).ThenInclude(project => project.Project)
+            .Where(u => u.UserId == user.UserId)
+            .FirstOrDefault();
 
-            var projsUsers = ProjectUsers.Where(u => u.UserId == user.UserId).ToList();
-            List < Project > p= new List<Project>();
-            foreach (var el in projsUsers)
+            string  json= JsonConvert.SerializeObject(data.ProjectUser.Select(pu=>pu.Project).ToList(), new JsonSerializerSettings
             {
-                p.Append(el.Project);
-            }
-            return JsonConvert.SerializeObject(p);
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
 
+            return json;
         }
     }
 }
