@@ -14,7 +14,7 @@ namespace Throw.Model
         public Guid ProjectGUID { get; set; }
 
         public string Title { get; set; }
-        public string Content { get; set; }
+        public string Content { get; set; } = "print('Hello world!')";
 
         public User Owner { get; set; }
 

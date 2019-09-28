@@ -4,3 +4,7 @@
 <button (click)="onClearOutput()">Clear output</button>
 
 <textarea [(ngModel)]="outputConsole" class="form-control" id="exampleFormControlTextarea1" rows="8"></textarea>
+
+<ul class="list-group" >
+  <li class="list-group-item" *ngFor="let usr of usrs">{{usr}}</li>
+</ul>

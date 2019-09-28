@@ -7,16 +7,21 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using Throw.Model;
+using Throw.Common;
+using Throw.SessionData;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Throw.Controllers
 {
     [Route("api/[controller]")]
     public class ProjectsController : Controller
     {
+        private IMemoryCache cache;
         private DataContext repo;
 
-        public ProjectsController(DataContext repository)
+        public ProjectsController(DataContext repository, IMemoryCache memoryCache)
         {
+            cache = memoryCache;
             repo = repository;
         }
 
@@ -125,10 +130,17 @@ namespace Throw.Controllers
         [HttpPost("open")]
         public JObject OpenProject([FromBody]JObject project)
         {
-            
-
             string projectGuid = project["guid"].ToString();
-            string jproject=repo.GetProjectByGUID(projectGuid);
+
+            string code = "";
+            Code currCode;
+            if (!cache.TryGetValue<Code>(projectGuid, out currCode)) { 
+                string jproject = repo.GetProjectByGUID(projectGuid);
+                JObject projectO = JObject.Parse(jproject);
+                currCode = new Code(projectO["Content"].ToString());
+            }
+            code = currCode.getCode();
+            cache.Set<Code>(projectGuid, currCode);
 
             /*bool projectBlocked = getProjectLock(projectGuid);
             string userRole = getUserRole(username, projectGuid);
@@ -147,12 +159,33 @@ namespace Throw.Controllers
 
             // return new JObject() { { "code",code }, {"role",userRole } };
 
-            return JObject.Parse(jproject);
+            return new JObject() { { "code", code } };
         }
 
         private bool getProjectLock(string projectGuid)
         {
             return true;
+        }
+
+        [HttpPost("change")]
+        public JObject Change([FromBody]JObject project)
+        {
+
+            string username = "filip";
+            string projectGuid = project["guid"].ToString();
+            int lineNumber = Int32.Parse(project["linenumber"].ToString());
+            string userRole = getUserRole(username, projectGuid);
+
+            //Code projectCode = HttpContext.Session.GetComplexData<Code>(projectGuid);
+            Code currCode;
+            if(cache.TryGetValue<Code>(projectGuid, out currCode))
+            {
+                
+            }
+
+            cache.Set<Code>(projectGuid, currCode);
+
+            return new JObject();
         }
     }
 }

@@ -12,6 +12,7 @@ export class EditorComponent {
   basePath;
   router;
   projectGuid = '';
+  usrs = ["Filip","Ana"];
 
   constructor(routerI : Router,http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
     this.httpClient = http;
@@ -68,23 +69,21 @@ export class EditorComponent {
 
     connection.on("codechange", (payload) => {
       alert(payload);
-      //this.messageService.add({ severity: type, summary: payload, detail: 'Via SignalR' });
     });
 
     connection.on("usersrefresh", (payload) => {
-      alert(payload);
-      //this.messageService.add({ severity: type, summary: payload, detail: 'Via SignalR' });
+      alert(JSON.stringify(payload));
+      this.usrs = payload["currentUsers"];
     });
 
     connection.on("outputchange", (payload) => {
-      this.outputConsole = payload["runResult"]
-
-      //this.messageService.add({ severity: type, summary: payload, detail: 'Via SignalR' });
+      this.outputConsole = payload["runResult"];
     });
 
   }
 
   @Input('code')
+
   public code = '';
   public lock = false;
   public outputConsole = '';
