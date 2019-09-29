@@ -1,4 +1,4 @@
-<ngx-monaco-editor [options]="editorOptions" [(ngModel)]="code"></ngx-monaco-editor>
+<ngx-monaco-editor (ngModelChange)="onChange($event)" [options]="editorOptions" [(ngModel)]="code"></ngx-monaco-editor>
 <button (click)="onRunProgram()">Run</button>
 <button (click)="onLockProgram()">Lock</button>
 <button (click)="onClearOutput()">Clear output</button>

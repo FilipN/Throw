@@ -10,6 +10,9 @@ using Throw.Model;
 using Throw.Common;
 using Throw.SessionData;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.AspNetCore.SignalR;
+using Throw.Hubs;
+using System.Threading;
 
 namespace Throw.Controllers
 {
@@ -18,11 +21,13 @@ namespace Throw.Controllers
     {
         private IMemoryCache cache;
         private DataContext repo;
+        IHubContext<ProjectHub> hub;
 
-        public ProjectsController(DataContext repository, IMemoryCache memoryCache)
+        public ProjectsController(DataContext repository, IMemoryCache memoryCache, IHubContext<ProjectHub> hubcontext)
         {
             cache = memoryCache;
             repo = repository;
+            hub = hubcontext;
         }
 
         private string runPython(string cmd, string args)
@@ -116,9 +121,11 @@ namespace Throw.Controllers
             string dirPath = Directory.GetCurrentDirectory();
             string path = dirPath+"\\ActiveProjectSnapshots\\" +username + "_" + projectGuid + ".py";
             string runResult = addFileAndRun(path, projectCode);
+            JObject runResultO = new JObject() { { "runResult", runResult } };
 
-            if (userRole == "rw") { 
+            if (userRole == "rw") {
                 //propagira se svima
+                hub.Clients.Groups(projectGuid).SendAsync("outputchange", runResultO);
             }
             else if (userRole == "r")
             {
@@ -156,26 +163,8 @@ namespace Throw.Controllers
             result.Add("project", jproject);
             result.Add("code", code);
             result.Add("users", new JArray( currCode.Users));
-
             return new JObject() { { "code", code } };
         }
-
-        /*bool projectBlocked = getProjectLock(projectGuid);
-            string userRole = getUserRole(username, projectGuid);
-
-            if (userRole == "rw")
-            {
-                //propagira se svima
-            }
-            else if (userRole == "r")
-            {
-
-            }
-
-            string code = "print('Hello world')"; */
-
-
-        // return new JObject() { { "code",code }, {"role",userRole } };
 
         private bool getProjectLock(string projectGuid)
         {
@@ -189,11 +178,9 @@ namespace Throw.Controllers
         {
             string username = project["identity"].ToString();
             string projectGuid = project["guid"].ToString();
-            int lineNumber = Int32.Parse(project["linenumber"].ToString());
             string ucode = project["code"].ToString();
             string userRole = getUserRole(username, projectGuid);
-
-
+            bool codeChangeExists = false;
 
             //Code projectCode = HttpContext.Session.GetComplexData<Code>(projectGuid);
             Code currCode;
@@ -202,7 +189,7 @@ namespace Throw.Controllers
                 string[] userCode = ucode.Split('\n');
 
                 int minLines = 0;
-                if (userCode.Length > currCode.Lines.Count)
+                if (userCode.Length < currCode.Lines.Count)
                     minLines = userCode.Length;
                 else
                     minLines = currCode.Lines.Count;
@@ -215,6 +202,7 @@ namespace Throw.Controllers
                         //proveriti pre promene da nije neki drugi user menjao ovu liniju pre n sekundi
                         currCode.Lines[i].Content = userCode[i];
                         currCode.Lines[i].LastModified = DateTime.Now;
+                        codeChangeExists = true;
                         //azurirati usera
                     }
                 }
@@ -243,8 +231,18 @@ namespace Throw.Controllers
                 //cache.Set<Code>(projectGuid, currCode);
             }
 
-            cache.Set<Code>(projectGuid, currCode);
+            if (codeChangeExists)
+            {
+                JObject runResultO = new JObject() { { "newCode", currCode.getCode() } };
 
+                if (userRole == "rw")
+                {
+                    //propagira se svima
+                    hub.Clients.Groups(projectGuid).SendAsync("codechange", runResultO);
+                }
+            }
+
+            cache.Set<Code>(projectGuid, currCode);
             return new JObject();
         }
 
