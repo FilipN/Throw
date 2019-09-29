@@ -109,6 +109,19 @@ namespace Throw.Model
 
         }
 
+        public void SaveProjectToDatabase(string username, string guid, string code)
+        {
+            User userDB = Users.FirstOrDefault(p => p.Email == username);
+            Project project = Projects.FirstOrDefault(p => p.ProjectGUID.ToString() == guid);
+
+            if( Projects.Include(p=>p.Owner).FirstOrDefault(p=>p.ProjectGUID.ToString()==guid).Owner.UserId==userDB.UserId)
+            {
+                project.Content = code;
+                SaveChanges();
+            }
+            
+        }
+
         public void AddMemberToProject(string username, string guid)
         {
             User userDB = Users.FirstOrDefault(p => p.Email == username);
