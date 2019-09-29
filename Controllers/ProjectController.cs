@@ -73,11 +73,6 @@ namespace Throw.Controllers
             return result;
         }
 
-        public string getUserRole(string user, string projectGuid)
-        {
-            return "rw";
-        }
-
         public string addFileAndRun(string path,string content)
         {
             //cuvanje fajla i pokretanje konzole python nad fajlom
@@ -91,19 +86,23 @@ namespace Throw.Controllers
         [HttpPost("lock")]
         public JObject Lock([FromBody]JObject project)
         {
-            string username = "filip";
-            //umesto ovoga ce biti uzimanje iz memorije ili baze
+            string username = project["identity"].ToString();
             string projectGuid = project["guid"].ToString();
-            string userRole = getUserRole(username, projectGuid);
-            
-            if (userRole == "rw") { 
-            
-                //odradi lock
-            }
-            else if (userRole == "r")
+
+            if (!(repo.GetProjectOwnerByGUID(projectGuid) == username))
+                return new JObject();
+
+            string jproject = repo.GetProjectByGUID(projectGuid);
+
+            Code currCode;
+            if (!cache.TryGetValue<Code>(projectGuid, out currCode))
             {
-                //nema prava
+                JObject projectO = JObject.Parse(jproject);
+                currCode = new Code(projectO["Content"].ToString());
             }
+
+            currCode.Locked = Boolean.Parse(project["lock"].ToString());
+            cache.Set<Code>(projectGuid, currCode);
 
             return new JObject();
         }
@@ -116,21 +115,15 @@ namespace Throw.Controllers
             string projectCode = project["code"].ToString();
             string projectGuid = project["guid"].ToString();
             bool projectBlocked = getProjectLock(projectGuid);
-            string userRole = getUserRole(username,projectGuid);
 
             string dirPath = Directory.GetCurrentDirectory();
             string path = dirPath+"\\ActiveProjectSnapshots\\" +username + "_" + projectGuid + ".py";
             string runResult = addFileAndRun(path, projectCode);
             JObject runResultO = new JObject() { { "runResult", runResult } };
 
-            if (userRole == "rw") {
-                //propagira se svima
-                hub.Clients.Groups(projectGuid).SendAsync("outputchange", runResultO);
-            }
-            else if (userRole == "r")
-            {
 
-            }
+            if (repo.GetProjectOwnerByGUID(projectGuid) == username)
+                hub.Clients.Groups(projectGuid).SendAsync("outputchange", runResultO);
 
             return new JObject() { { "runResult", runResult } };
         }
@@ -179,8 +172,8 @@ namespace Throw.Controllers
             string username = project["identity"].ToString();
             string projectGuid = project["guid"].ToString();
             string ucode = project["code"].ToString();
-            string userRole = getUserRole(username, projectGuid);
             bool codeChangeExists = false;
+
 
             //Code projectCode = HttpContext.Session.GetComplexData<Code>(projectGuid);
             Code currCode;
@@ -214,6 +207,7 @@ namespace Throw.Controllers
                     for(int i =minLines; i< userCode.Length; i++)
                     {
                         currCode.addLine(userCode[i]);
+                        codeChangeExists = true;
                     }
                 }
 
@@ -224,18 +218,22 @@ namespace Throw.Controllers
                     for (int i = minLines; i < currCode.Lines.Count; i++)
                     {
                         currCode.deleteLine(i);
+                        codeChangeExists = true;
                     }
                 }
-
-
-                //cache.Set<Code>(projectGuid, currCode);
             }
 
             if (codeChangeExists)
             {
                 JObject runResultO = new JObject() { { "newCode", currCode.getCode() } };
 
-                if (userRole == "rw")
+                string role;
+                if (repo.GetProjectOwnerByGUID(projectGuid) == username)
+                    role = "owner";
+                else
+                    role = "member";
+
+                if ((role == "member" && !currCode.Locked)||role=="owner")
                 {
                     //propagira se svima
                     hub.Clients.Groups(projectGuid).SendAsync("codechange", runResultO);

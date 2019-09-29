@@ -8,9 +8,11 @@ namespace Throw.SessionData
 {
     public class Code
     {
+        public bool Locked { get; set; }
         public List<Line> Lines { get; set; } = new List<Line>();
         public Code(string codeContent)
         {
+            Locked = false;
             string[] lines = codeContent.Split("\n");
             int i = 0;
             foreach (string item in lines)

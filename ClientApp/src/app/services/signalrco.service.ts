@@ -50,7 +50,6 @@ export class SignalrcoService {
   }
 
   public disconnect() {
-    alert('disconected');
     this.guid = '';
     this.connection.stop();
   }

@@ -40,7 +40,7 @@ export class EditorComponent {
     let guid = pathParts[pathParts.length - 1];
     signalsrv.setGuid(guid);
   }
-
+  cssStringVar = 'btn-info';
   timerStarted = false;
 
   public onChange(e) {
@@ -80,21 +80,25 @@ export class EditorComponent {
   }
 
   public onClearConsole() {
-    let un = this.getUserName();
-
     this.outputConsole = "";
   }
 
-
-
   public onLock() {
     let un = this.getUserName();
-    let message = { "lock": this.lock, 'guid': 'sdfsdf234' };
+    let lock = false;
+    if (this.cssStringVar == 'btn-info') {
+      lock = true;
+      this.cssStringVar = 'btn-primary';
+    }else {
+      lock = false;
+      this.cssStringVar = 'btn-info';
+    }
 
-    this.httpClient.post(this.basePath + 'api/projects/run', message).subscribe(result => {
-      this.outputConsole = result["runResult"]
-    }, error => console.error(error));
+    let message = { 'lock': lock, 'guid': this.projectGuid, 'identity': un };
 
+    this.httpClient.post(this.basePath + 'api/projects/lock', message).subscribe(result => {
+
+    }, error => console.log(error));
   }
 
   public editorOptions = {theme: 'vs-dark', language: 'python'};
@@ -113,32 +117,6 @@ export class EditorComponent {
     }, error => console.error(error));
 
     this.projectGuid = guid;
-
-    /*this.connection = new signalR.HubConnectionBuilder()
-      .configureLogging(signalR.LogLevel.Information)
-      .withUrl("https://localhost:44369/code")
-      .build();
-
-    this.connection.start().then(function () {
-      console.log('Connected!');
-      this.connection.invoke("JoinGroup", guid);
-    }).catch(function (err) {
-      return console.error(err.toString());
-    });
-
-
-    this.connection.on("codechange", (payload) => {
-      //this.code = payload["newCode"];
-    });
-
-    this.connection.on("usersrefresh", (payload) => {
-      alert(JSON.stringify(payload));
-      this.usrs = payload["currentUsers"];
-    });
-
-    this.connection.on("outputchange", (payload) => {
-      this.outputConsole = payload["runResult"];
-    });*/
 
   }
   ngOnDestroy(): void {
