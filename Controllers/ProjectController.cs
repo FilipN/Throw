@@ -254,5 +254,17 @@ namespace Throw.Controllers
             JObject result = new JObject() { { "result", json } };
             return result;
         }
+
+        [HttpPost("saveproject")]
+        public JObject SaveProject([FromBody]JObject projectIn)
+        {
+            string username = projectIn["identity"].ToString();
+            string projectGuid = projectIn["guid"].ToString();
+            string ucode = projectIn["code"].ToString();
+
+            repo.SaveProjectToDatabase(username, projectGuid, ucode);
+            JObject result = new JObject() { { "result", "" } };
+            return result;
+        }
     }
 }
