@@ -271,7 +271,7 @@ namespace Throw.Controllers
         [HttpPost("projectsforuser")]
         public JObject ProjectsForUser([FromBody]JObject userIn)
         {
-            string email = userIn["email"].ToString();
+            string email = userIn["identity"].ToString();
             string json = repo.GetProjectsForUser(email);
             JObject result = new JObject() { { "result", json } };
             return result;

@@ -157,12 +157,48 @@ namespace Throw.Model
             .Where(u => u.UserId == user.UserId)
             .FirstOrDefault();
 
-            string  json= JsonConvert.SerializeObject(data.ProjectUser.Select(pu=>pu.Project).ToList(), new JsonSerializerSettings
+            var projects = Projects
+            .Include(p => p.Owner)
+            .Include(u => u.ProjectUser).ThenInclude(project => project.Project)
+            .Where(p => p.Owner.UserId == user.UserId || p.ProjectUser.Any(pu => pu.UserId == user.UserId));
+
+            List<ProjectView> pwlist = new List<ProjectView>();
+
+            foreach (var pr in projects)
             {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-            });
+                ProjectView pw = new ProjectView();
+                pw.ProjectGUID = pr.ProjectGUID;
+                pw.Content = pr.Content;
+                pw.Title = pr.Title;
+
+                pw.Users = new List<string>();
+                pw.Users.Add(pr.Owner.Email);
+                foreach (var projectuser in pr.ProjectUser)
+                {
+                    string e = Users.FirstOrDefault(u => u.UserId == projectuser.UserId).Email;
+                    if (!pw.Users.Contains(e))
+                        pw.Users.Add(e);
+                }
+
+                pwlist.Add(pw);
+
+            }
+
+            string json = JsonConvert.SerializeObject(pwlist);
 
             return json;
+        }
+
+        public class ProjectView
+        {
+            public Guid ProjectGUID { get; set; }
+
+            public string Title { get; set; }
+            public string Content { get; set; }
+
+            public List<string> Users { get; set; }
+
+
         }
     }
 }
