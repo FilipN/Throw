@@ -114,7 +114,6 @@ namespace Throw.Controllers
             //umesto ovoga ce biti uzimanje iz memorije ili baze
             string projectCode = project["code"].ToString();
             string projectGuid = project["guid"].ToString();
-            bool projectBlocked = getProjectLock(projectGuid);
 
             string dirPath = Directory.GetCurrentDirectory();
             string path = dirPath+"\\ActiveProjectSnapshots\\" +username + "_" + projectGuid + ".py";
@@ -156,14 +155,39 @@ namespace Throw.Controllers
             result.Add("project", jproject);
             result.Add("code", code);
             result.Add("users", new JArray( currCode.Users));
-            return new JObject() { { "code", code } };
+
+            JObject others = new JObject();
+            others.Add("users", new JArray(currCode.Users));
+            hub.Clients.Groups(projectGuid).SendAsync("usersrefresh", others);
+
+            return result;
         }
 
-        private bool getProjectLock(string projectGuid)
+
+        [HttpPost("leave")]
+        public JObject leaveProject([FromBody]JObject project)
         {
-            return true;
-        }
+            string username = project["identity"].ToString();
+            string projectGuid = project["guid"].ToString();
 
+            string jproject = repo.GetProjectByGUID(projectGuid);
+
+
+            Code currCode;
+            if (!cache.TryGetValue<Code>(projectGuid, out currCode))
+            {
+                JObject projectO = JObject.Parse(jproject);
+                currCode = new Code(projectO["Content"].ToString());
+            }
+            currCode.Users.Remove(username);
+            cache.Set<Code>(projectGuid, currCode);
+
+            JObject others = new JObject();
+            others.Add("users", new JArray(currCode.Users));
+            hub.Clients.Groups(projectGuid).SendAsync("usersrefresh", others);
+
+            return new JObject();
+        }
 
         //pozivace se stalno na key press
         [HttpPost("change")]

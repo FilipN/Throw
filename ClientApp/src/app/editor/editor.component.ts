@@ -1,4 +1,4 @@
-import { Component, Input, Inject,SimpleChanges } from '@angular/core';
+import { Component, Input, Inject, SimpleChanges, HostListener,HostBinding } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { SignalrcoService } from '../services/signalrco.service';
@@ -13,7 +13,7 @@ export class EditorComponent {
   basePath;
   router;
   projectGuid = '';
-  usrs = ["Filip", "Ana"];
+  usrs = [];
 
   public content;
   signalserv;
@@ -27,7 +27,7 @@ export class EditorComponent {
     });
 
     signalsrv.usersRefresh((message) => {
-      this.code = message["newCode"];
+      this.usrs = message["users"];
     });
 
     signalsrv.outputChange((message) => {
@@ -112,14 +112,30 @@ export class EditorComponent {
 
     let message = { "identity": un, "guid": guid };
     this.httpClient.post(this.basePath + 'api/projects/open', message).subscribe(result => {
-
-      this.code = result["code"]
+      this.usrs = result["users"];
+      this.code = result["code"];
     }, error => console.error(error));
 
     this.projectGuid = guid;
 
   }
+
+  @HostListener('window:unload', ['$event'])
+  unloadHandler(event) {
+    let un = this.getUserName();
+    let message = { 'guid': this.projectGuid, 'identity': un };
+    this.httpClient.post(this.basePath + 'api/projects/leave', message).subscribe(result => {
+
+    }, error => console.log(error));
+  }
+
   ngOnDestroy(): void {
+    let un = this.getUserName();
+    let message = { 'guid': this.projectGuid, 'identity': un };
+    this.httpClient.post(this.basePath + 'api/projects/leave', message).subscribe(result => {
+
+    }, error => console.log(error));
+
     this.signalserv.disconnect();
   }
 
