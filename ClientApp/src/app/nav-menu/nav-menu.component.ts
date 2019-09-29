@@ -25,21 +25,34 @@ export class NavMenuComponent {
   }
 
   public getUserName() {
+    if (localStorage.getItem('socialusers') == undefined)
+      return undefined;
     let username = JSON.parse(localStorage.getItem('socialusers'))["email"];
     return username;
   }
 
   public onLogout() {
+    let id = this.getUserName();
+
     localStorage.removeItem("socialusers");
     this.router.navigate(['/', 'login']);
   }
 
   public onProjects() {
+    let id = this.getUserName();
+    if (id == undefined) {
+      alert("Login first.")
+      return;
+    }
     this.router.navigate(['/', 'projects']);
   }
 
   public onNewProject() {
     let id = this.getUserName();
+    if (id == undefined) {
+      alert("Login first.")
+      return;
+    }
     let message = { "identity": id};
 
     this.httpClient.post(this.basePath + 'api/projects/new', message).subscribe(result => {
