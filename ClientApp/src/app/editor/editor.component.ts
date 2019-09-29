@@ -17,6 +17,7 @@ export class EditorComponent {
 
   public content;
   signalserv;
+  owner = false;
   constructor(routerI: Router, http: HttpClient, @Inject('BASE_URL') baseUrl: string, private signalsrv: SignalrcoService) {
     this.httpClient = http;
     this.basePath = baseUrl;
@@ -61,8 +62,6 @@ export class EditorComponent {
     }
 
     //this.connection.invoke("CodeChange", e);
-
-    
   }
 
   public getUserName() {
@@ -81,6 +80,14 @@ export class EditorComponent {
 
   public onClearConsole() {
     this.outputConsole = "";
+  }
+
+  public onSaveCode() {
+    let un = this.getUserName();
+    let message = { "code": this.code, 'guid': this.projectGuid, 'identity': un };
+
+    this.httpClient.post(this.basePath + 'api/projects/save', message).subscribe(result => {
+    }, error => console.error(error));
   }
 
   public onLock() {
@@ -114,6 +121,7 @@ export class EditorComponent {
     this.httpClient.post(this.basePath + 'api/projects/open', message).subscribe(result => {
       this.usrs = result["users"];
       this.code = result["code"];
+      this.owner = result["role"] == 'owner';
     }, error => console.error(error));
 
     this.projectGuid = guid;

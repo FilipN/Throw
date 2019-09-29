@@ -1,10 +1,12 @@
 <ngx-monaco-editor (ngModelChange)="onChange($event)" [options]="editorOptions" [(ngModel)]="code"></ngx-monaco-editor>
 <button class="btn-success" (click)="onRunProgram()">Run</button>
-  <button [className]="cssStringVar" (click)="onLock()">Lock</button>
-  <button (click)="onClearConsole()">Clear output</button>
+<button *ngIf="owner" [className]="cssStringVar" (click)="onLock()">Lock</button>
+<button (click)="onClearConsole()">Clear output</button>
+<button *ngIf="owner" (click)="onSaveCode()">Save code</button>
+
 
 <textarea [(ngModel)]="outputConsole" class="form-control" id="exampleFormControlTextarea1" rows="8"></textarea>
 
-  <ul class="list-group">
-    <li class="list-group-item" *ngFor="let usr of usrs">{{usr}}</li>
-  </ul>
+<ul class="list-group">
+  <li class="list-group-item" *ngFor="let usr of usrs">{{usr}}</li>
+</ul>

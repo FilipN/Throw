@@ -268,8 +268,6 @@ namespace Throw.Controllers
             return new JObject();
         }
 
-
-
         [HttpPost("projectsforuser")]
         public JObject ProjectsForUser([FromBody]JObject userIn)
         {
@@ -279,7 +277,7 @@ namespace Throw.Controllers
             return result;
         }
 
-        [HttpPost("saveproject")]
+        [HttpPost("save")]
         public JObject SaveProject([FromBody]JObject projectIn)
         {
             string username = projectIn["identity"].ToString();
